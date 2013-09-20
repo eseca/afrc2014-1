@@ -1,12 +1,20 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+"""afrc.py: Ejercicio de captura de paquetes de red."""
+__author__ = ["Axel Eduardo Becerril Nájera", "Erick Carmona"]
+__authors__ = ["Axel Eduardo Becerril Nájera", "Erick Carmona"]
+__email__ = "axl@ciencias.unam.mx"
+__version__ = "0.1"
+__license__ = "BSD"
+__status__ = "Development"
+
 import argparse, pcapy, socket, sys, datetime
 from struct import unpack
 from sys import exit
 
 def devs():
-    """ Muestra las interfaces de red disponibles."""
+    """Muestra las interfaces de red disponibles."""
 
     try:
         print "Interfaces de red disponibles:"
