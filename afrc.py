@@ -9,7 +9,7 @@ __version__ = "0.1"
 __license__ = "BSD"
 __status__ = "Development"
 
-import argparse, pcapy, socket, sys, datetime
+import argparse, pcapy, socket, sys, datetime, struct
 from struct import unpack
 from sys import exit
 
@@ -24,7 +24,7 @@ def devs():
         print "Error: No pudo accederse a los dispositivos. (¿Se cuenta con los privilegios necesarios?)"
 
 def sniff(dev, snaplen=65536, promisc=True, timeout=0):
-    """Inicia la captura de paquetes."""
+    """Inicia la captura de paquetes en el dispositivo indicado."""
 
     # Abrir dispositivo para captura.
     cap = pcapy.open_live(dev, snaplen, promisc , timeout)
@@ -39,6 +39,17 @@ def sniff(dev, snaplen=65536, promisc=True, timeout=0):
         except (KeyboardInterrupt, SystemExit):
             print "Terminando la captura de paquetes."
             exit()
+
+def offline(filename):
+    """Anaiza un archivo pcap."""
+    print "Abriendo archivo «" + filename + "»..."
+    cap = pcapy.open_offline(filename)
+    while True:
+        (header, packet) = cap.next()
+        if header != None:
+            parse(packet)
+        else:
+            break
 
 def pretty_mac (addr) :
     """Formatea una dirección MAC."""
@@ -56,7 +67,11 @@ def parse(packet):
 
     eth_len=14
     eth_header = packet[:eth_len]
+    #try:
     eth = unpack('!6s6sH' , eth_header)
+    #except struct.error:
+    #    print "! No se pudo leer la cabecera ethernet"
+    #    return 1
 
     if eth[2] <= 0x05DC:
         dsc = unpack('!3B', packet[eth_len:eth_len+3])
@@ -200,15 +215,20 @@ def parse(packet):
 def main():
     parser = argparse.ArgumentParser(description='Ejercicio de captura de paquetes de red')
     # Opción para hacer el listado de dispositivos de red
-    parser.add_argument('-ls', '--list-devices', dest='devices', action='store_const', const=devs,
+    parser.add_argument('-l', '--list-devices', dest='devices',
+            action='store_const', const=devs,
             required=False, help=devs.__doc__)
     # Opción para iniciar la captura de paquetes
-    parser.add_argument('--sniff', nargs=1, metavar='dispositivo', help="Inicia la captura de paquetes en el dispositivo indicado.")
+    parser.add_argument('--sniff', nargs=1, metavar='dispositivo', help=sniff.__doc__)
+
+    parser.add_argument('--offline', nargs=1, metavar='archivo', help=offline.__doc__)
 
     args = parser.parse_args()
 
     if args.devices:
         args.devices()
+    elif args.offline:
+        offline(args.offline[0])
     elif args.sniff:
         sniff(dev=args.sniff[0])
 
