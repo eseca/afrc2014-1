@@ -63,21 +63,21 @@ def parse(packet):
         if dsc == (0xAA, 0xAA, 0x03):
             print "IEEE 802.3 Ethernet SNAP"
             snap = unpack('!3sH', packet[eth_len+3:eth_len+8])
-            eth_protocol = socket.ntohs(snap[1])
+            eth_protocol = snap[1]
             eth_len=22  # Ajustar cabecera eth
         else:
             print "IEEE 802.3 Ethernet"
             print "DSAP:%.2x SSAP:%.2x" % tuple(dsc[:2],)
             # TODO Basado señales. Abstraer protocolos en clases:
-            eth_protocol = 8 if dsc[0] == 0x06 else None
+            eth_protocol = 0x0800 if dsc[0] == 0x06 else None
             eth_len=18  # Ajustar cabecera eth
     else:
         print "Ethernet Version 2"
-        eth_protocol = socket.ntohs(eth[2])
+        eth_protocol = eth[2]
 
     print pretty_mac(eth[0]) +  " → " + pretty_mac(eth[1])
 
-    if eth_protocol == 8:     # IP Protocol 
+    if eth_protocol == 0x0800:     # IP Protocol 
         print "Protocolo: IP"
         ip_header = packet[eth_len:20+eth_len]
         iph = unpack('!BBHHHBBH4s4s' , ip_header)
@@ -174,7 +174,28 @@ def parse(packet):
             #print "|\tData: " + data
  
         else :  # TODO
-            print "Protocolo no identificado."
+            print "|\tProtocolo no identificado."
+    elif eth_protocol == 0x0806:     # ARP Protocol 
+        arp_header = packet[eth_len:8+eth_len]
+        arph = unpack('!HHBBH', arp_header)
+        hw_type = {0x0001:'Ethernet', 0x0006:'IEEE 802 LAN'}[arph[0]]
+        proto_type = 'IPv4' if arph[1]==0x0008 else "%.4x" % (arph[1],)
+
+        arp_stuff = packet[8+eth_len:28+eth_len]
+        arps = unpack('!6s4s6s4s', arp_stuff)
+        sha = pretty_mac(arps[0])
+        spa = arps[1]
+        tha = pretty_mac(arps[2])
+        tpa = arps[3]
+
+        print "|\tARP"
+        print "|\t|\tHW address type: " + hw_type
+        print "|\t|\tProto address type: " + proto_type
+        print "|\t|\tHW address length: " + str(arph[2])
+        print "|\t|\tProto address length: " + str(arph[3])
+        print "|\t|\tOperation: " + ("Reply" if arph[4]==2 else "Request")
+        print "|\t|\tSHA: " + sha
+        print "|\t|\tTHA: " + tha
 
 def main():
     parser = argparse.ArgumentParser(description='Ejercicio de captura de paquetes de red')
