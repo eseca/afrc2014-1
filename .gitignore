@@ -36,3 +36,6 @@ nosetests.xml
 
 # Vim swap files
 *.swp
+
+# Pcap files
+*.pcap
