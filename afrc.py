@@ -24,6 +24,8 @@ def devs():
         print "Error: No pudo accederse a los dispositivos. (¿Se cuenta con los privilegios necesarios?)"
 
 def sniff(dev, snaplen=65536, promisc=True, timeout=0):
+    """Inicia la captura de paquetes."""
+
     # Abrir dispositivo para captura.
     cap = pcapy.open_live(dev, snaplen, promisc , timeout)
 
@@ -39,20 +41,43 @@ def sniff(dev, snaplen=65536, promisc=True, timeout=0):
             exit()
 
 def pretty_mac (addr) :
+    """Formatea una dirección MAC."""
     pretty = "%.2x:%.2x:%.2x:%.2x:%.2x:%.2x" % tuple(map(ord, addr))
     return pretty
 
 def parse(packet):
+    # 0123456789012345678901234567890123456789012345678901234567890123
+    # Ethernet Version 2
+    # PPPPPPPPDDDDDDSSSSSSTTxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxFFFF
+    # IEEE 802.3 
+    # PRRRRRRRDDDDDDSSSSSSLLdsccxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxFFFF
+    # IEEE 802.3 SNAP header
+    # PRRRRRRRDDDDDDSSSSSSLLdscOOOTTxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxFFFF
+
     eth_len=14
     eth_header = packet[:eth_len]
     eth = unpack('!6s6sH' , eth_header)
 
-    print "◦◦◦◦◦◦◦◦◦◦◦◦◦◦◦◦◦◦◦◦◦◦◦◦◦◦◦◦◦◦◦◦◦◦◦◦◦◦◦◦◦◦◦◦◦◦◦◦" # TODO: Un separador más majo.
-    print "Direcciones MAC: " + pretty_mac(packet[0:6]) +  " → " + pretty_mac(packet[6:12])
+    if eth[2] <= 0x05DC:
+        dsc = unpack('!3B', packet[eth_len:eth_len+3])
+        if dsc == (0xAA, 0xAA, 0x03):
+            print "IEEE 802.3 Ethernet SNAP"
+            snap = unpack('!3sH', packet[eth_len+3:eth_len+8])
+            eth_protocol = socket.ntohs(snap[1])
+            eth_len=22  # Ajustar cabecera eth
+        else:
+            print "IEEE 802.3 Ethernet"
+            print "DSAP:%.2x SSAP:%.2x" % tuple(dsc[:2],)
+            # TODO Basado señales. Abstraer protocolos en clases:
+            eth_protocol = 8 if dsc[0] == 0x06 else None
+            eth_len=18  # Ajustar cabecera eth
+    else:
+        print "Ethernet Version 2"
+        eth_protocol = socket.ntohs(eth[2])
 
-    eth_protocol = socket.ntohs(eth[2])
+    print pretty_mac(eth[0]) +  " → " + pretty_mac(eth[1])
 
-    if eth_protocol == 8:   # IP Protocol 
+    if eth_protocol == 8:     # IP Protocol 
         print "Protocolo: IP"
         ip_header = packet[eth_len:20+eth_len]
         iph = unpack('!BBHHHBBH4s4s' , ip_header)
@@ -67,11 +92,11 @@ def parse(packet):
         s_addr = socket.inet_ntoa(iph[8]);
         d_addr = socket.inet_ntoa(iph[9]);
 
-        print "\tVersion: " + str(version)
-        print "\tIP Header Length : " + str(ihl) 
-        print "\tTTL : " + str(ttl) 
-        print "\tProtocol : " + str(protocol) 
-        print "\t" + str(s_addr) + " → " + str(d_addr)
+        print "|\tVersion: " + str(version)
+        print "|\tIP Header Length : " + str(ihl) 
+        print "|\tTTL : " + str(ttl) 
+        print "|\t" + str(s_addr) + " → " + str(d_addr)
+        print "|\tProtocol : " + str(protocol) 
 
         if protocol == 6 : #TCP protocol
             t = iph_length + eth_len
@@ -86,18 +111,19 @@ def parse(packet):
             doff_reserved = tcph[4]
             tcph_length = doff_reserved >> 4
              
-            print "\tSource Port: " + str(source_port) 
-            print "\tDest Port: " + str(dest_port) 
-            print "\tSequence Number: " + str(sequence) 
-            print "\tAcknowledgement: " + str(acknowledgement) 
-            print "\tTCP header length: " + str(tcph_length)
+            print "|\tTCP"
+            print "|\t|\tSource Port: " + str(source_port) 
+            print "|\t|\tDest Port: " + str(dest_port) 
+            print "|\t|\tSequence Number: " + str(sequence) 
+            print "|\t|\tAcknowledgement: " + str(acknowledgement) 
+            print "|\t|\tTCP header length: " + str(tcph_length)
              
             h_size = eth_len + iph_length + tcph_length * 4
             data_size = len(packet) - h_size
              
             data = packet[h_size:]
              
-            print "\tData : " + data
+            #print "|\tData : " + data
  
         elif protocol == 1 :    # ICMP
             u = iph_length + eth_len
@@ -110,16 +136,17 @@ def parse(packet):
             code = icmph[1]
             checksum = icmph[2]
              
-            print "\tType: " + str(icmp_type) 
-            print "\tCode: " + str(code) 
-            print "\tChecksum: " + str(checksum)
+            print "|\tICMP"
+            print "|\t|\tType: " + str(icmp_type) 
+            print "|\t|\tCode: " + str(code) 
+            print "|\t|\tChecksum: " + str(checksum)
              
             h_size = eth_len + iph_length + icmph_length
             data_size = len(packet) - h_size
              
             data = packet[h_size:]
              
-            print "\tData: " + data
+            #print "|\tData: " + data
  
         elif protocol == 17 :   # UDP
             u = iph_length + eth_len
@@ -133,17 +160,18 @@ def parse(packet):
             length = udph[2]
             checksum = udph[3]
              
-            print "\tSource Port: " + str(source_port) 
-            print "\tDest Port: " + str(dest_port) 
-            print "\tLength: " + str(length) 
-            print "\tChecksum: " + str(checksum)
+            print "|\tUDP"
+            print "|\t|\tSource Port: " + str(source_port) 
+            print "|\t|\tDest Port: " + str(dest_port) 
+            print "|\t|\tLength: " + str(length) 
+            print "|\t|\tChecksum: " + str(checksum)
              
             h_size = eth_len + iph_length + udph_length
             data_size = len(packet) - h_size
              
             data = packet[h_size:]
              
-            print "\tData: " + data
+            #print "|\tData: " + data
  
         else :  # TODO
             print "Protocolo no identificado."
