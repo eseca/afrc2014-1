@@ -23,11 +23,17 @@ def devs():
     except pcapy.PcapError:
         print "Error: No pudo accederse a los dispositivos. (¿Se cuenta con los privilegios necesarios?)"
 
-def sniff(dev, snaplen=65536, promisc=True, timeout=0):
+def sniff(dev, snaplen=65536, promisc=True, timeout=0, dump=None):
     """Inicia la captura de paquetes en el dispositivo indicado."""
 
     # Abrir dispositivo para captura.
     cap = pcapy.open_live(dev, snaplen, promisc , timeout)
+
+    # Abrir dumpfile
+    if dump is not None:
+        d = cap.dump_open(dump)
+    else:
+        d = None
 
     # Iniciar la captura de paquetes
     print "Iniciando la captura de paquetes en " + dev + "."
@@ -36,6 +42,9 @@ def sniff(dev, snaplen=65536, promisc=True, timeout=0):
         try:
             (header, packet) = cap.next()
             parse(packet)
+            if d is not None:
+                d.dump(header, packet)
+
         except (KeyboardInterrupt, SystemExit):
             print "Terminando la captura de paquetes."
             exit()
@@ -57,6 +66,9 @@ def pretty_mac (addr) :
     return pretty
 
 def parse(packet):
+    """Interpreta los paquetes"""
+    # TODO: Limpiar esta función abstrayendo a clases los paquetes.
+
     # 0123456789012345678901234567890123456789012345678901234567890123
     # Ethernet Version 2
     # PPPPPPPPDDDDDDSSSSSSTTxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxFFFF
@@ -221,7 +233,10 @@ def main():
     # Opción para iniciar la captura de paquetes
     parser.add_argument('--sniff', nargs=1, metavar='dispositivo', help=sniff.__doc__)
 
-    parser.add_argument('--offline', nargs=1, metavar='archivo', help=offline.__doc__)
+    parser.add_argument('-w', '--write-file', dest='dump', nargs=1,
+            metavar='archivo-de-salida', help="Guarda la captura de paquetes a un archivo pcap.")
+
+    parser.add_argument('--offline', nargs=1, metavar='archivo-de-lectura', help=offline.__doc__)
 
     args = parser.parse_args()
 
@@ -230,7 +245,7 @@ def main():
     elif args.offline:
         offline(args.offline[0])
     elif args.sniff:
-        sniff(dev=args.sniff[0])
+        sniff(dev=args.sniff[0], dump = args.dump[0] if args.dump else None)
 
 if __name__ == "__main__":
     main()
