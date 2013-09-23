@@ -39,3 +39,6 @@ nosetests.xml
 
 # Pcap files
 *.pcap
+
+# tar
+*.tar.gz
