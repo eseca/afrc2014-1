@@ -52,24 +52,182 @@ table {
  */
 
 @font-face {
+    font-family:"prosa";
+    src: url(../fonts/Inconsolata.otf) format("truetype");
+}
+
+@font-face {
     font-family:"code";
-    src: url(fonts/Inconsolata.otf) format("truetype");
+    src: url(../fonts/TerminusBold.ttf) format("truetype");
 }
 
 body {
-    background: rgb(215, 215, 215);
-    background: -webkit-gradient(radial, 50% 50%, 0, 50% 50%, 500, from(rgb(240, 240, 240)), to(rgb(190, 190, 190)));
-    background: -webkit-radial-gradient(rgb(240, 240, 240), rgb(190, 190, 190));
-    background:    -moz-radial-gradient(rgb(240, 240, 240), rgb(190, 190, 190));
-    background:     -ms-radial-gradient(rgb(240, 240, 240), rgb(190, 190, 190));
-    background:      -o-radial-gradient(rgb(240, 240, 240), rgb(190, 190, 190));
-    background:         radial-gradient(rgb(240, 240, 240), rgb(190, 190, 190));    
-    font-family:"code";
+    color: #000000;
+    font-family:"prosa";
+    font-size: 30pt;
+    background: #FFA340;
+    background: -webkit-gradient(radial, 50% 50%, 0, 50% 50%, 500, from(#FFBC73), to(#FFA340));
+}
+
+.step {
+    width:900px;
 }
 
 
-h1 {
+.tech {
+    font-weight: bold;
+    color: #A40004;
+}
+
+.protocol {
+    color: #892276;
+    display: inline-block;
+}
+
+.ttt {
+    color: #444444;
+    display: inline-block;
+    font-family:"code";
+    font-size: bold;
+}
+
+.chunk {
+    border: solid 20px #A65600;
+    height: 700px;
+}
+
+
+/* Title styles */
+#title-page h1 {
+    text-align: left;
+    font-weight: bold;
+    font-size: 130pt;
+    margin: 0 0 50px 0;
+}
+
+#title-page h2 {
+    text-align: left;
+    font-weight: bold;
+    font-size: 40pt;
+    margin: 0 0 50px 0;
+}
+
+#title-page h3 {
+    text-align: right;
+    font-weight: bold;
+    font-size: 20pt;
+    text-align: right;
+    margin: 0 0 50px 0;
+}
+
+/* Abstract styles */
+#abstract h2 {
+    text-align: center;
+    font-weight: bold;
+    font-size: 50pt;
+    margin: 0 0 50px 0;
+}
+
+#abstract p {
+    margin: 30px;
+}
+
+#abstract div {
+    text-align: center;
+}
+
+#abstract a {
+    font-size: 15pt;
+    display: block;
+}
+
+
+/* Technologies styles */
+.techs {
+    border-color: #FE3F44;
+}
+
+.techs h1 {
     text-align: left;
     font-weight: bold;
     font-size: 60pt;
+    margin: 140px 0 0 20px;
+}
+
+.techs p {
+    margin: 20px 40px;
+}
+
+#techs ul {
+    font-size: 40pt;
+    margin: 100px 400px;
+    list-style: square;
+}
+
+/* Techs.Python */
+#techs_pcapy div {
+    text-align: center
+}
+
+/* Techs.struct */
+#techs_unpack h2 {
+    margin: 30px 0 20px 20px;
+}
+
+#techs_unpack ul {
+    margin-left: 40px;
+}
+
+#techs_unpack li {
+    margin: 5px 0;
+}
+
+/* Design */
+.design {
+    border-color: #770060;
+}
+
+.design h1 {
+    font-size: 40pt;
+    font-weight: bold;
+    margin-top: 120pt;
+    margin-bottom: 40pt;
+    margin-left: 45pt;
+}
+
+#design li {
+    margin-top: 25px;
+    margin-left: 150px;
+    margin-right: 50px;
+    list-style: square;
+}
+
+#design_code h2 {
+    font-size:40pt;
+    margin-left: 100px;
+}
+
+#design_ls h2, #design_sniff h2, #design_offline h2 {
+    font-size: 40px;
+    margin-left: 50px;
+    margin-top: 30px;
+}
+
+#design_ls p, #design_sniff p, #design_offline p {
+    margin-left: 20px;
+}
+
+#design_issues li {
+    margin-top: 25px;
+    margin-left: 90px;
+    margin-right: 20px;
+    list-style: square;
+}
+
+#design_issues div {
+    text-align:center;
+}
+
+#design_questions {
+    padding-left: 900px;
 }

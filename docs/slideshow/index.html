@@ -6,60 +6,149 @@
     <meta name="viewport" content="width=1024" />
     <title>afrc.py - Capturador de paquetes con pcapy</title>
     <meta name="author" content="sk" />
-    <link href="slidesrc/style.css" rel="stylesheet" />
+    <link href="css/style.css" rel="stylesheet" />
     
 </head>
 
 <body class="impress-not-supported">
 
-<div class="fallback-message">
-    <p>Your browser <b>doesn't support the features required</b> by impress.js, so you are presented with a simplified version of this presentation.</p>
-    <p>For the best experience please use the latest <b>Chrome</b>, <b>Safari</b> or <b>Firefox</b> browser.</p>
-</div>
-
 <div id="impress">
 
     <!-- 0. Título -->
-    <div id="title-page" class="step" data-x="0" data-y="0" data-scale="4">
-        <h1>afrc.py</h1>
+    <div id="title-page" class="step" data-x="1000" data-y="-600" data-scale="6">
+        <h1>afrc.<span class="tech">py</span></h1>
         <h2>Analizador de paquetes de red basado en <span class="tech">pcapy</span>.</h2>
         <h3>por: Axel Becerril &amp; Erick Carmona</h3>
     </div>
 
     <!-- 1. Abstract  -->
-    <div id="abstract" class="step" data-x="1000" data-y="0">
+    <div id="abstract" class="step chunk" data-x="-1500" data-y="1000">
         <h2>Resumen</h2>
         <p>Se escribió en <span class="tech">Python</span> un sencillo analizador de paquetes de red usando el m&oacute;dulo <span class="tech">pcapy</span></p>
-        <p>El programa analiza paquetes: <span class="protocol">Ethernet ver. 2</span>, <span class="protocol">IEEE 802.3 IP</span>, <span class="protocol">ARP</span>, <span class="protocol">ICMP</span>, <span class="protocol">TCP</span> y <span class="protocol">UDP</span></p>
+        <p>El programa analiza paquetes: <span class="protocol">Ethernet ver. 2</span>, <span class="protocol">IEEE 802.3 IP</span>, <span class="protocol">ARP</span>, <span class="protocol">ICMP</span>, <span class="protocol">TCP</span> y <span class="protocol">UDP</span>.</p>
         <div>
-            <a>https://github.com/eseca/afrc2014-1</a>
             <img src="http://qrfree.kaywa.com/?l=1&s=8&d=https%3A%2F%2Fgithub.com%2Feseca%2Fafrc2014-1" alt="QRCode"/>
+            <a href="https://github.com/vim-scripts/css_color.vim.git">https://github.com/eseca/afrc2014-1</a>
         </div>
     </div>
 
     <!-- 2. Tecnologias empleadas -->
-    <div id="techs" class="step" data-x="2000" data-y="0">
+    <div id="techs" class="techs step chunk" data-x="-500" data-y="1000">
+        <h1>Tecnolog&iacute;as empleadas:</h1>
+        <ul>
+            <li class="tech">Python</li>
+            <li class="tech">Pcapy</li>
+            <li class="tech">python.struct</li>
+        </ul>
+    </div>
+
+    <!-- 2.1 Python -->
+    <div id="techs_python" class="techs step chunk" data-x="500" data-y="1000">
+        <h1>&iquest;Porqué <span class="tech">Python</span>?</h1>
+
+        <p><span class="tech">Python</span> es un lenguaje multiparadigma de tipado dinámico que nos permite trabajar de manera rápida, obteniendo código compacto y digerible.</p>
+    </div>
+
+    <!-- 2.2 Pcapy -->
+    <div id="techs_pcapy" class="techs step chunk" data-x="1500" data-y="1000">
+        <h1>&iquest;Qué es <span class="tech">Pcapy</span>?</h1>
+
+        <p><span class="tech">Pcapy</span> es una interfaz de <span class="tech">libpcap</span> que permite capturar paquetes desde <span class="tech">Pyhton</span>.</p>
+        <div>
+            <img src="http://qrfree.kaywa.com/?l=1&s=8&d=http%3A%2F%2Fcorelabs.coresecurity.com%2Findex.php%3Fmodule%3DWiki%26action%3Dview%26type%3Dtool%26name%3DPcapy" alt="QRCode"/>
+        </div>
+    </div>
+
+    <!-- 2.3 struct -->
+    <div id="techs_struct" class="techs step chunk" data-x="2500" data-y="1000">
+        <h1>El m&oacute;dulo <span class="tech">struct</span></h1>
+        <p>Realiza conversiones entre valores de <span class="tech">Python</span> y estructuras de <span class="tech">C</span> representadas c&oacute;mo cadenas de <span class="tech">Python</span>.</p>
+        <p>En este caso, se us&oacute; para manipular la información binaria de las conexiones de red.</p>
+
+    </div>
+
+    <!-- 2.4 struct.unpack -->
+    <div id="techs_unpack" class="techs step chunk" data-x="3500" data-y="1000">
+        <h1>El m&eacute;todo <span class="tech">struct.unpack</span></h1>
+        <h2 class="ttt">struct.unpack(format, string)</h2>
+        <ul>
+            <li><span class="ttt">format</span>: Format string que indica como debe leerse la info.</li>
+            <li><span class="ttt">string</span>: Cadena de texto con la información.</li>
+        </ul>
+
+    </div>
+
+    <!-- 3.0 Diseño de la aplicación -->
+    <div id="design" class="design step chunk" data-x="-1500" data-y="1800">
+        <h1>Dise&ntilde;o de la aplicaci&oacute;n</h1>
+        <ul>
+            <li>Comportamiento imperativo.</li>
+            <li>No hay objetos ni abstracci&oacute;n alguna.</li>
+            <li>Se emplea el formato <span class="tech">pcap</span> para leer y guardar capturas.</li>
+            <li>Interfaz de l&iacute;nea de comandos</li>
+        </ul>
+
+    </div>
+
+    <!-- 3.1 Diseño de la aplicación -->
+    <div id="design_code" class="design step chunk" data-x="-500" data-y="1800">
+        <h1>Veamos el c&oacute;digo</h1>
+        <h2>afrc.py</h2>
+    </div>
+
+    <!-- 3.2 Diseño de la aplicación -->
+    <div id="design_ls" class="design step chunk" data-x="500" data-y="1800">
+        <h1>Uso:</h1>
+        <h2 class="ttt">afrc.py --list-devices</h2>
+        <p>Muestra la lista de dispositivos de red disponibles.</p>
+        
+    </div>
+
+    <!-- 3.3 Diseño de la aplicación -->
+    <div id="design_sniff" class="design step chunk" data-x="1500" data-y="1800">
+        <h1>Uso:</h1>
+        <h2 class="ttt">afrc.py --sniff dispisitivo</h2>
+        <p>Inicia la captura de paquetes en el dispositivo indicado.</p>
+
+        <h2 class="ttt">afrc.py --sniff dispisitivo -w archivo-de-salida</h2>
+        <p>Guarda la captura en formato pcap en el fichero indicado.</p>
+        
+    </div>
+
+    <!-- 3.4 Diseño de la aplicación -->
+    <div id="design_offline" class="design step chunk" data-x="2500" data-y="1800">
+        <h1>Uso:</h1>
+        <h2 class="ttt">afrc.py --offline archivo-de-lectura</h2>
+        <p>Abre el archivo <span class"tech">pcap</span> indicado.</p>
+
+    </div>
+
+    <!-- 3.4 Diseño de la aplicación -->
+    <div id="design_action" class="design step chunk" data-x="3500" data-y="1800">
+        <h1>Veámoslo en acci&oacute;n</h1>
+
+    </div>
+
+    <!-- 3.4 Diseño de la aplicación -->
+    <div id="design_issues" class="design step chunk" data-x="-1500" data-y="2600">
+        <h1>Problemas conocidos</h1>
+        <ul>
+            <li>No parsea bien <span class="tech">802.3 LLC</span>.</li>
+            <li>Lentitud en el resto del entorno durante la captura. Puede que se solucione usando threads.</li>
+        </ul>
+
+    </div>
+
+    <!-- 3.4 Diseño de la aplicación -->
+    <div id="design_questions" class="step" data-x="1000" data-y="4000" data-rotate="90" data-scale="8">
+        <div>
+            <img src="img/no-idea.jpg" />
+        </div>
 
     </div>
 </div>
 
-
-<!--
-    
-    Last, but not least.
-    
-    To make all described above really work, you need to include impress.js in the page.
-    I strongly encourage to minify it first.
-    
-    In here I just include full source of the script to make it more readable.
-    
-    You also need to call a `impress().init()` function to initialize impress.js presentation.
-    And you should do it in the end of your document. Not only because it's a good practice, but also
-    because it should be done when the whole document is ready.
-    Of course you can wrap it in any kind of "DOM ready" event, but I was too lazy to do so ;)
-    
--->
-<script src="slidesrc/impress.js"></script>
+<script src="js/impress.js"></script>
 <script>impress().init();</script>
 
 
