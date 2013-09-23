@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 """afrc.py: Ejercicio de captura de paquetes de red."""
-__author__ = ["Axel Eduardo Becerril Nájera", "Erick Carmona"]
-__authors__ = ["Axel Eduardo Becerril Nájera", "Erick Carmona"]
+__author__ = ["Axel Eduardo Becerril Nájera", "Erick Carmona Jiménez"]
+__authors__ = ["Axel Eduardo Becerril Nájera", "Erick Carmona Jiménez"]
 __email__ = "axl@ciencias.unam.mx"
 __version__ = "0.1"
 __license__ = "BSD"
